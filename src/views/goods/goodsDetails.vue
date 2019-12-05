@@ -112,14 +112,14 @@
     </div>
     <van-goods-action class="goods-action">
       <van-goods-action-icon icon="audio" />
-      <van-goods-action-icon icon="cart-o" info="5" to="/cart" />
+      <van-goods-action-icon icon="cart-o" :info="cartNum ==0?'':cartNum" to="/cart" />
       <van-goods-action-button
         color="#1ac0a8"
         type="warning"
         text="add Cart"
-        @click="onBuyClicked(0)"
+        @click="onBuyClicked(1)"
       />
-      <van-goods-action-button type="danger" text="buy" color="#fb581d" @click="onBuyClicked(1)" />
+      <van-goods-action-button type="danger" text="buy" color="#fb581d" @click="onBuyClicked(0)" />
     </van-goods-action>
   </div>
 </template>
@@ -135,7 +135,8 @@ export default {
   },
   data() {
     return {
-      isAddCart: false,
+      isAddCart: 0,
+      cartNum:0,
       show: false,
       skuShow: false,
       actions: [
@@ -158,6 +159,7 @@ export default {
         ],
         // 所有 sku 的组合列表，比如红色、M 码为一个 sku 组合，红色、S 码为另一个组合
         list: [],
+        stock_num: null,
         price: "" // 默认价格（单位元）
       },
       likeInfo: []
@@ -165,6 +167,7 @@ export default {
   },
   created() {
     this.getDetails();
+    this.getCartNum()
   },
   mounted() {
     if (this.$route.params.open == "1") {
@@ -174,12 +177,18 @@ export default {
     }
   },
   methods: {
+    getCartNum(){
+      this.$SERVER.cartCount().then(res=>{
+        this.cartNum = res.data.count
+      })
+    },
     getDetails() {
       this.$SERVER.productDetail(this.$route.params.id).then(res => {
         this.balance = res.data.now_money;
         this.storeInfo = res.data.storeInfo;
-        this.price = res.data.storeInfo.price;
+        this.sku.price = res.data.storeInfo.price;
         this.likeInfo = res.data.likeInfo;
+        this.sku.stock_num = res.data.storeInfo.stock;
         if (res.data.productAttr.length == 0) {
           this.sku.tree = [];
           return;
@@ -210,20 +219,30 @@ export default {
     },
     onSubmit(sku) {
       var json = {};
+      var path;
       json.cartNum = sku.selectedNum;
-      json.new = 1;
       json.productId = sku.goodsId;
       if (sku.selectedSkuComb) {
         json.uniqueId = sku.selectedSkuComb.s1;
       } else {
         json.uniqueId = "";
       }
-      this.$SERVER.addCart(json).then(res => {
-        this.$router.push({
-          name:"confirmationOrder",
-          params:res.data
+      if (this.isAddCart) {
+        json.new = 0;
+        this.$SERVER.addCart(json).then(res => {
+          this.$toast.success(res.msg);
+          this.skuShow = false;
+          this.getCartNum()
         });
-      });
+      } else {
+        json.new = 1;
+        this.$SERVER.addCart(json).then(res => {
+          this.$router.push({
+            name: "confirmationOrder",
+            params: res.data
+          });
+        });
+      }
     }
   }
 };

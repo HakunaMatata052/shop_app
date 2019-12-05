@@ -37,7 +37,13 @@ class Api extends Axios {
   async orderConfirm(params = {}) {
     return await this.axios("POST", "order/confirm", params);
   }
-
+  async cartCount(params = {}) {
+    return await this.axios("GET", "cart/count", params);
+  }
+  async cartList(params = {}) {
+    return await this.axios("GET", "cart/list", params);
+  }
+  
   
 }
 

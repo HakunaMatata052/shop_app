@@ -58,15 +58,15 @@
       </div>
       <div class="order-info">
         <p>
-          Freight(1 in total) : $23.00
-          <br />order amount: $5,019.80
+          Freight({{cartInfo.length}} in total) : {{$store.state.currency}}{{orderInfo.priceGroup.storePostage}}
+          <br />order amount: {{$store.state.currency}}{{orderInfo.priceGroup.storePostage+orderInfo.priceGroup.totalPrice}}
         </p>
 
         <van-divider color="#d8dada" />
         <div class="user-balance">
           <p>
             Pay with account balance
-            <br />Available Balance: $9,019.80
+            <br />Available Balance: {{$store.state.currency}}9,019.80
           </p>
           <van-checkbox v-model="checked"></van-checkbox>
         </div>

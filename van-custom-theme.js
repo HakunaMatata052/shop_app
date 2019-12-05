@@ -147,7 +147,7 @@ module.exports.theme = {
 "@checkbox-checked-icon-color": "@blue",
 "@checkbox-disabled-icon-color": "@gray",
 "@checkbox-disabled-label-color": "@gray",
-"@checkbox-disabled-background-color": "@border-color",
+"@checkbox-disabled-background-color": "#f2f4f5",//"@border-color",
 // Circle
 "@circle-text-color": "@text-color",
 // Collapse
