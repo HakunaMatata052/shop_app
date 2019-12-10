@@ -23,10 +23,10 @@ class Api extends Axios {
     return await this.axios("POST", "drying/dryingadd", params);
   }
   async index(params = {}) {
-    return await this.axios("GET", "index", params);
+    return await this.axios("GET", "index", params,{LOADING:true});
   }
   async productDetail(params = {}) {
-    return await this.axios("GET", "product/detail/"+params);
+    return await this.axios("GET", "product/detail/"+params,{},{LOADING:true});
   }
   async addCart(params = {}) {
     return await this.axios("POST", "cart/add", params);
@@ -43,7 +43,42 @@ class Api extends Axios {
   async cartList(params = {}) {
     return await this.axios("GET", "cart/list", params);
   }
-  
+  async cartNum(params = {}) {
+    return await this.axios("POST", "cart/num", params);
+  }
+  async orderComputed(params = {}) {
+    return await this.axios("POST", "order/computed/"+ params);
+  }
+  async cartDel(params = {}) {
+    return await this.axios("POST", "cart/del", params);
+  }
+  async orderList(params = {}) {
+    return await this.axios("POST", "order/list", params);
+  }
+  async productHot(params = {}) {
+    return await this.axios("GET", "product/hot", params);
+  }
+  async search(params = {}) {
+    return await this.axios("GET", "products", params,{LOADING:true});
+  }
+  async category(params = {}) {
+    return await this.axios("GET", "category", params);
+  }
+  async messageList(params = {}) {
+    return await this.axios("GET", "message/list", params);
+  }
+  async messageEdit(params = {}) {
+    return await this.axios("GET", "message/edit", params,{LOADING:true});
+  }
+  async messageDel(params = {}) {
+    return await this.axios("GET", "message/del", params);
+  }
+  async userBank(params = {}) {
+    return await this.axios("GET", "user/userbank", params,{LOADING:true});
+  }  
+  async BankDel(params = {}) {
+    return await this.axios("POST", "user/userbank", params,{LOADING:true});
+  }
   
 }
 

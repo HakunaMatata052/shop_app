@@ -10,17 +10,28 @@
             </div>
             <div class="user-name">
               <h3>{{item.nickname}}</h3>
-              <p>{{$METHOD.format(item.created_at,'yyyy-MM-dd hh:mm:ss')}}</p>
+              <p>{{item.created_at | format('yyyy-MM-dd hh:mm:ss')}}</p>
             </div>
           </div>
           <div class="content">{{item.content}}</div>
           <van-row :gutter="8" class="image-list">
             <van-col span="8" v-for="(item2,index) in item.imgs" :key="index">
-              <van-image fit="cover" class="image" :src="item2" @click.stop="imagePreview(item.imgs,index)" />
+              <van-image
+                fit="cover"
+                class="image"
+                :src="item2"
+                @click.stop="imagePreview(item.imgs,index)"
+              />
             </van-col>
           </van-row>
           <div class="bottom">
-            <van-button plain round type="primary" class="btn" @click="$router.push('/goodsDetails/'+item.goods_id)">I ALSO WANT TO BUY</van-button>
+            <van-button
+              plain
+              round
+              type="primary"
+              class="btn"
+              @click="$router.push('/goodsDetails/'+item.goods_id)"
+            >I ALSO WANT TO BUY</van-button>
           </div>
         </div>
       </van-list>
@@ -43,14 +54,13 @@ export default {
       loading: false,
       list: [],
       mediaList: [],
-      user_img:user_img
+      user_img: user_img
     };
   },
   components: {
     navBar
   },
   methods: {
-      
     getList() {
       this.$SERVER
         .dryingList({
@@ -58,15 +68,15 @@ export default {
         })
         .then(res => {
           if (res.data.length == 0) {
-              console.log(1)
+            console.log(1);
             this.finished = true;
           }
-          this.loading=false;
+          this.loading = false;
           this.page++;
           this.list = [...this.list, ...res.data];
         });
     },
-    imagePreview(imgs,index) {
+    imagePreview(imgs, index) {
       var that = this;
       ImagePreview({
         images: imgs,

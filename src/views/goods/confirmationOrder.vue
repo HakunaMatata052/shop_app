@@ -36,7 +36,7 @@
               <div class="isVip">Exclusive for Diamond Members</div>
             </div>
           </div>
-          <van-radio-group v-model="radio" class="radio-group">
+          <van-radio-group v-model="item.type" class="radio-group">
             <van-radio name="1" class="radio">
               <p>
                 $ 2,234.95 official repo expires
@@ -51,24 +51,24 @@
           <van-divider color="#d8dada"/>
           <div class="subtotal">
             Subtotal:
-            <span>{{$store.state.currency}}{{orderInfo.priceGroup.totalPrice}}</span>
+            <span>{{$store.state.currency}}{{item.truePrice*item.cart_num}}</span>
           </div>
         </div>
 
       </div>
       <div class="order-info">
         <p>
-          Freight({{cartInfo.length}} in total) : {{$store.state.currency}}{{orderInfo.priceGroup.storePostage}}
-          <br />order amount: {{$store.state.currency}}{{orderInfo.priceGroup.storePostage+orderInfo.priceGroup.totalPrice}}
+          Freight({{cartInfo.length}} in total) : {{$store.state.currency}}{{orderPrice.pay_postage || 0}}
+          <br />order amount: {{$store.state.currency}}{{orderPrice.total_price || 0}}
         </p>
 
         <van-divider color="#d8dada" />
         <div class="user-balance">
           <p>
             Pay with account balance
-            <br />Available Balance: {{$store.state.currency}}9,019.80
+            <br />Available Balance: {{$store.state.currency}}{{userInfo.now_money || 0}}
           </p>
-          <van-checkbox v-model="checked"></van-checkbox>
+          <van-checkbox v-model="payType" class="checkbox"></van-checkbox>
         </div>
       </div>
       <van-popup v-model="show" round position="bottom">
@@ -78,6 +78,7 @@
           @add="onAdd"
           @edit="onEdit"
           @click-item="selectAdress"
+          add-button-text="add address"
         />
       </van-popup>
     </div>
@@ -85,9 +86,12 @@
       label="Total:"
       :currency="$store.state.currency"
       text-align="left"
-      :price="orderInfo.priceGroup.totalPrice"
+      :price="orderPrice.pay_price*100"
       button-text="confirm payment"
       @submit="onSubmit"
+      button-type="warning"
+      safe-area-inset-bottom
+      v-if="!show"
     />
   </div>
 </template>
@@ -103,7 +107,12 @@ export default {
       address:{},
       list: [],
       orderInfo:{},
-      cartInfo:[]
+      cartInfo:[],
+      orderPrice:{
+        pay_price: 0
+      },
+      userInfo: {},
+      payType:0
     };
   },
   components: {
@@ -129,11 +138,19 @@ export default {
         this.list.push(json);
       }
     });
-    this.$SERVER.orderConfirm(this.$route.params).then(res=>{
+    this.$SERVER.orderConfirm({
+      cartId:this.$route.params.id
+    }).then(res=>{
       this.cartInfo = res.data.cartInfo
       this.orderInfo =  res.data
+      this.$SERVER.orderComputed(res.data.orderKey).then(res2=>{
+        this.orderPrice = res2.data.result;
+      })
     }).catch(err=>{
       this.$router.go(-1)
+    })
+    this.$SERVER.getUserInfo().then(res=>{
+      this.userInfo = res.data
     })
   },
   methods: {
@@ -147,7 +164,11 @@ export default {
   }
 };
 </script>
-
+<style lang="less">
+.van-submit-bar__button{
+  width: auto!important;
+}
+</style>
 <style lang="less" scoped>
 .address {
   padding: 28px 10px 10px;
@@ -265,6 +286,7 @@ export default {
   background-color: #f5f7f7;
   border-radius: 5px;
   padding: 30px 20px;
+  margin-bottom: 50px;
   p {
     font-size: 18px;
     font-weight: bold;
@@ -275,6 +297,10 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    .checkbox {
+      background: #ccc;
+      border-radius: 50%;
+    }
   }
 }
 </style>

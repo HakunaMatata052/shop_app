@@ -1,6 +1,9 @@
 <template>
   <div class="container">
-    <navBar :goback="false" />
+    <navBar :goback="false" :search="true">
+        <van-icon name="envelop-o" :dot="message_count>0" size="23px" slot="left" @click="$router.push('/messageList')"/>
+        <van-icon name="shopping-cart-o" :size="cartNum==0?23:22" slot="right"  :info="cartNum==0?'':cartNum" @click="$router.push('/cart')"/>
+    </navBar>
     <div class="main">
       <van-swipe :autoplay="3000" indicator-color="white" class="banner">
         <van-swipe-item v-for="(item,i) in banner" :key="i" @click="$router.push(item.url)">
@@ -35,7 +38,9 @@ export default {
     return {
       banner: [],
       menu: [],
-      list: []
+      list: [],
+      cartNum:0,
+      message_count:0
     };
   },
   components: {
@@ -44,6 +49,7 @@ export default {
   },
   created() {
     this.getList();
+    this.getCartNum()
   },
   deactivated() {},
   methods: {
@@ -53,7 +59,16 @@ export default {
         this.list = res.data.bastList;
         this.menu = res.data.cateogry;
       });
-    }
+    },
+    
+    getCartNum() {
+      if(this.$METHOD.getStore('token')){
+      this.$SERVER.cartCount().then(res => {
+        this.cartNum = res.data.count;
+        this.message_count = res.data.message_count
+      });
+      }
+    },
   }
 };
 </script>

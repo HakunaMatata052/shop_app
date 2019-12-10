@@ -31,12 +31,12 @@ const codeMessage = {
 // 发起请求前
 axios.interceptors.request.use(
   config => {
-    if (config.LOADINGHIDE) {
+    if (config.LOADING) {
       Toast.loading({
         duration: 0, // 持续展示 toast
         forbidClick: true, // 禁用背景点击
         loadingType: "spinner",
-        message: "加载中..."
+        message: "loading..."
       });
     }
     // qs转换

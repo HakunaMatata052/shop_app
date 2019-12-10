@@ -80,7 +80,7 @@ export default {
     return {
       menu: [
         { name: "Bill", path: "/", icon: "order" },
-        { name: "Bank Cards", path: "/", icon: "creditcard" },
+        { name: "Bank Cards", path: "/bankCardList", icon: "creditcard" },
         { name: "My Address", path: "/", icon: "map" },
         { name: "Invite", path: "/", icon: "favorites" },
         { name: "VIP Privilege", path: "/", icon: "bussiness-man" },

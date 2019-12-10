@@ -405,7 +405,7 @@ module.exports.theme = {
 "@rate-icon-size": "20px",
 "@rate-icon-gutter": "4px",
 // Search
-"@search-padding": "10px @padding-sm",
+"@search-padding": "0",
 "@search-background-color": "#f7f8fA",
 "@search-input-height": "34px",
 "@search-label-padding": "0 5px",

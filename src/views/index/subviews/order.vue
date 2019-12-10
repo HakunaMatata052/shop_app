@@ -3,19 +3,20 @@
     <navBar :goback="false" />
     <div class="main">
       <van-tabs
+        v-model="activeType"
         :swipe-threshold="2"
         :ellipsis="false"
         :border="false"
         title-active-color="#1ac0a8"
         title-inactive-color="#999"
         :line-height="0"
-        class="tabs"
+        class="order-tabs"
       >
         <van-tab :title="item.name" :name="item.type" v-for="(item,i) in tabs" :key="i"></van-tab>
       </van-tabs>
 
       <div class="goods-list">
-        <div class="goods-items">
+        <div class="goods-items" v-for="(item,i) in list" :key="i">
           <div class="goods-type">
             <div class="text">
               <span>To be paid</span>countdown:35days
@@ -39,7 +40,7 @@
           <van-divider />
           <div class="bottom-info">
             <div class="text">
-              <span>Expire after</span>  12:20:36
+              <span>Expire after</span> 12:20:36
             </div>
             <van-button type="warning" round class="btn">To pay</van-button>
             <van-button type="primary" round plain class="btn">share order</van-button>
@@ -56,6 +57,9 @@ export default {
   name: "",
   data() {
     return {
+      activeType: 0,
+      page:1,
+      list:[],
       tabs: [
         { name: "ALL", type: 0 },
         { name: "TO BE PAID", type: 1 },
@@ -67,10 +71,22 @@ export default {
   },
   components: {
     navBar
+  },
+  methods:{
+    getList(){
+      this.$SERVER.orderList({
+        page:this.page,
+        type:this.activeType
+      }).then(res=>{
+        this.list = res.data
+      })
+    }
   }
 };
 </script>
 <style lang="less">
+.order-tabs {
+
 .van-tabs__wrap {
   height: 30px !important;
 }
@@ -86,6 +102,7 @@ export default {
   span {
     font-weight: bold !important;
   }
+}
 }
 </style>
 
@@ -103,7 +120,7 @@ export default {
     .text {
       color: #999999;
       span {
-          display: inline-block;
+        display: inline-block;
         height: 22px;
         line-height: 22px;
         padding: 0 10px;

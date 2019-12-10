@@ -1,7 +1,15 @@
 <template>
   <div class="container">
-    <navBar />
-    <div class="main">
+    <navBar :search="true">
+      <van-icon
+        name="shopping-cart-o"
+        :size="cartNum==0?23:22"
+        slot="right"
+        :info="cartNum==0?'':cartNum"
+        @click="$router.push('/cart')"
+      />
+    </navBar>
+    <div class="main" ref="main">
       <van-swipe :autoplay="3000" indicator-color="white" class="banner">
         <van-swipe-item v-for="(item,i) in storeInfo.slider_image" :key="i">
           <img :src="item" />
@@ -31,15 +39,13 @@
         <h5>Enjoy a higher discount forever</h5>
         <p>Become a special agent</p>
       </div>
-      <div class="product-details">
+      <div class="product-details" v-if="storeInfo.index_attr">
         <h3>- product details -</h3>
         <p>
-          2436-by-1125-pixel resolution at 458 ppi
-          <br />2,000,000:1 contrast ratio (typical)
-          <br />True Tone display
-          <br />Wide color display (P3)
-          <br />Haptic Touch
-          <br />800 nits max brightness (typical)
+          <span v-for="(attr,i) in storeInfo.index_attr.split('&')" :key="i">
+            {{attr}}
+            <br />
+          </span>
         </p>
       </div>
       <div class="share-btn" @click="$router.push('/shareOrder/1')">
@@ -54,6 +60,7 @@
         </div>
         <goods-item :data="item" v-for="(item,i) in likeInfo" :key="i" />
       </div>
+      <div class="safe-area-inset-bottom"></div>
       <van-action-sheet v-model="show" :actions="actions" @select="onSelect" />
       <van-sku
         v-model="skuShow"
@@ -67,6 +74,8 @@
         class="sku"
         safe-area-inset-bottom
         :show-add-cart-btn="false"
+        button-type="warning"
+        buy-text="confirm"
       >
         <!-- 自定义 sku-header-price -->
         <template slot="sku-header-price" slot-scope="props">
@@ -76,23 +85,13 @@
             <p>Pre-sale 60-day delivery</p>
             <div class="sku-info">
               <div class="price">
+                <h3>{{ props.price }}</h3>
                 <s>{{$store.state.currency}}{{storeInfo.ot_price}}</s>
               </div>
             </div>
           </div>
         </template>
 
-        <!-- 自定义 sku actions -->
-        <!-- <template slot="sku-actions" slot-scope="props">
-          <van-submit-bar
-            label="Total:"
-            :currency="$store.state.currency"
-            :price="3050"
-            button-text="Submit"
-            class="submit-bar"
-            @submit="props.skuEventBus.$emit('sku:buy')"
-          />
-        </template>-->
         <template slot="sku-body-top" slot-scope="props">
           <div class="option">
             <h3>Exclusive Member Discounts</h3>
@@ -110,7 +109,7 @@
         </template>
       </van-sku>
     </div>
-    <van-goods-action class="goods-action">
+    <van-goods-action class="goods-action" safe-area-inset-bottom v-if="!skuShow">
       <van-goods-action-icon icon="audio" />
       <van-goods-action-icon icon="cart-o" :info="cartNum ==0?'':cartNum" to="/cart" />
       <van-goods-action-button
@@ -136,7 +135,7 @@ export default {
   data() {
     return {
       isAddCart: 0,
-      cartNum:0,
+      cartNum: 0,
       show: false,
       skuShow: false,
       actions: [
@@ -145,7 +144,9 @@ export default {
         { name: "选项", subname: "描述信息" }
       ],
       balance: null,
-      storeInfo: {},
+      storeInfo: {
+        index_attr: ""
+      },
       data: {},
       sku: {
         // 所有sku规格类目与其值的从属关系，比如商品有颜色和尺码两大类规格，颜色下面又有红色和蓝色两个规格值。
@@ -153,7 +154,11 @@ export default {
         tree: [
           {
             k: "specifications", // skuKeyName：规格类目名称
-            v: [],
+            v: [
+              {
+                id: 0
+              }
+            ],
             k_s: "s1" // skuKeyStr：sku 组合列表（下方 list）中当前类目对应的 key 值，value 值会是从属于当前类目的一个规格值 id
           }
         ],
@@ -165,11 +170,16 @@ export default {
       likeInfo: []
     };
   },
+  watch: {
+    $route() {
+      this.getDetails();
+    }
+  },
   created() {
-    this.getDetails();
-    this.getCartNum()
+    this.getCartNum();
   },
   mounted() {
+    this.getDetails();
     if (this.$route.params.open == "1") {
       setTimeout(() => {
         this.skuShow = true;
@@ -177,12 +187,15 @@ export default {
     }
   },
   methods: {
-    getCartNum(){
-      this.$SERVER.cartCount().then(res=>{
-        this.cartNum = res.data.count
-      })
+    getCartNum() {
+      if (this.$METHOD.getStore("token")) {
+        this.$SERVER.cartCount().then(res => {
+          this.cartNum = res.data.count;
+        });
+      }
     },
     getDetails() {
+      this.$refs.main.scrollTop = 0;
       this.$SERVER.productDetail(this.$route.params.id).then(res => {
         this.balance = res.data.now_money;
         this.storeInfo = res.data.storeInfo;
@@ -193,6 +206,7 @@ export default {
           this.sku.tree = [];
           return;
         }
+        this.sku.tree[0].v = [];
         for (let i in res.data.productValue) {
           this.sku.tree[0].v.push({
             id: res.data.productValue[i].unique, // skuValueId：规格值 id
@@ -232,15 +246,12 @@ export default {
         this.$SERVER.addCart(json).then(res => {
           this.$toast.success(res.msg);
           this.skuShow = false;
-          this.getCartNum()
+          this.getCartNum();
         });
       } else {
         json.new = 1;
         this.$SERVER.addCart(json).then(res => {
-          this.$router.push({
-            name: "confirmationOrder",
-            params: res.data
-          });
+          this.$router.push("/confirmationOrder/" + res.data.cartId);
         });
       }
     }

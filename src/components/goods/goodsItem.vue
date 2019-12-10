@@ -1,6 +1,6 @@
 <template>
   <div class="goods-items" @click.stop="$router.push('/goodsDetails/'+data.id+'/0')">
-    <div class="left">
+    <div class="left" :style="'width:'+leftWidth">
       <img :src="data.image" />
     </div>
     <div class="right">
@@ -20,7 +20,19 @@
 
 <script>
 export default {
-  props: ["data"]
+  props: {
+    data: {
+      type: Object,
+      required: true
+    },
+    leftWidth: {
+      type: String,
+      default() {
+        return "105px";
+      },
+      required: false
+    }
+  }
 };
 </script>
 

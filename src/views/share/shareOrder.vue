@@ -11,7 +11,13 @@
         maxlength="300"
       ></textarea>
       <div class="preview">
-        <van-uploader v-model="fileList" :max-count="3" multiple :max-size="600000" @oversize="oversize"/>
+        <van-uploader
+          v-model="fileList"
+          :max-count="3"
+          multiple
+          :max-size="3000000"
+          @oversize="oversize"
+        />
       </div>
       <van-button type="primary" round class="btn" @click="submit">SAVE</van-button>
 
@@ -48,9 +54,9 @@ export default {
     navBar
   },
   methods: {
-      oversize(){
-this.$toast.fail("Please enter content!");
-      },
+    oversize() {
+      this.$toast.fail("Picture too large");
+    },
     upload(data) {
       let formData = new FormData();
       formData.append("file", data);
