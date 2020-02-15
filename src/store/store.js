@@ -21,7 +21,10 @@ export default new Vuex.Store({
     currency:"$",
     vipList:[],
     cartCount:0,
-    qiniuaddr: "http://95youhe.com/"  //七牛地址
+    register:{
+      spread:null
+    },
+    whatsapp:"15034332622"
   },
   mutations: {},
   actions: {}

@@ -32,15 +32,19 @@ Vue.use(Navigation, {
   keyName: "AS"
 });
 
+import { Locale } from 'vant';
+import enUS from 'vant/lib/locale/lang/en-US';
+
+Locale.use('en-US', enUS);
+
 Object.keys(filters).forEach(key => {
   Vue.filter(key, filters[key])
 })
-
-// const isApp = true; // 手动切换
+window.isApp =  window.navigator.userAgent.match(/APICloud/i); // 手动切换
 // alert(window.navigator.userAgent);
 // 该判断只在云编译环境下才有效 使用isApp变量手动设置环境(ios必须要有测试包的情况下，才会携带apicloud标识)
 // 标识可以在config.xml文件userAgent字段设置
-if (window.navigator.userAgent.match(/APICloud/i)) {
+if (window.isApp) {
 // if (true) {
   window.apiready = function() {
     process.env.NODE_ENV === "development" && new VConsole()
@@ -53,7 +57,7 @@ if (window.navigator.userAgent.match(/APICloud/i)) {
     }).$mount("#app");
   };
 } else {
-  process.env.NODE_ENV === "development"  // && new VConsole();
+  process.env.NODE_ENV === "development"   // && new VConsole();
   new Vue({
     router,
     store,

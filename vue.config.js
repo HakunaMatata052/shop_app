@@ -6,7 +6,7 @@ const {
   spawn
 } = require("child_process");
 
-const appname = "apicloud"; // 项目文件名  widget  apicloud
+const appname = "widget"; // 项目文件名  widget  apicloud
 const appPort = 1111; // 真机同步端口,浏览器打开端口。(请与)
 const scriptActive = process.env.npm_lifecycle_event;
 const customTheme = require("./van-custom-theme")

@@ -1,8 +1,20 @@
 <template>
   <div class="container">
     <navBar :goback="false" :search="true">
-        <van-icon name="envelop-o" :dot="message_count>0" size="23px" slot="left" @click="$router.push('/messageList')"/>
-        <van-icon name="shopping-cart-o" :size="cartNum==0?23:22" slot="right"  :info="cartNum==0?'':cartNum" @click="$router.push('/cart')"/>
+      <van-icon
+        name="envelop-o"
+        :dot="message_count>0"
+        size="23px"
+        slot="left"
+        @click="$router.push('/messageList')"
+      />
+      <van-icon
+        name="shopping-cart-o"
+        :size="cartNum==0?23:22"
+        slot="right"
+        :info="cartNum==0?'':cartNum"
+        @click="$router.push('/cart')"
+      />
     </navBar>
     <div class="main">
       <van-swipe :autoplay="3000" indicator-color="white" class="banner">
@@ -19,9 +31,14 @@
         </p>
       </div>
       <van-grid :column-num="4" :border="false" clickable class="menu">
-        <van-grid-item :text="item.cate_name" v-for="(item,i) in menu" :key="i" :to="'/cateogry/'+item.id">
+        <van-grid-item
+          :text="item.cate_name"
+          v-for="(item,i) in menu"
+          :key="i"
+          @click="$router.push({name:'categories',params:{id:i}})"
+        >
           <van-icon :name="item.pic" slot="icon" class="ico" />
-        </van-grid-item>        
+        </van-grid-item>
       </van-grid>
       <div class="goods-list">
         <goods-item :data="item" v-for="(item,i) in list" :key="i" />
@@ -39,8 +56,8 @@ export default {
       banner: [],
       menu: [],
       list: [],
-      cartNum:0,
-      message_count:0
+      cartNum: 0,
+      message_count: 0
     };
   },
   components: {
@@ -49,9 +66,11 @@ export default {
   },
   created() {
     this.getList();
-    this.getCartNum()
+    this.getCartNum();
   },
-  deactivated() {},
+  deactivated() {
+    this.getCartNum();
+  },
   methods: {
     getList() {
       this.$SERVER.index().then(res => {
@@ -60,15 +79,15 @@ export default {
         this.menu = res.data.cateogry;
       });
     },
-    
+
     getCartNum() {
-      if(this.$METHOD.getStore('token')){
-      this.$SERVER.cartCount().then(res => {
-        this.cartNum = res.data.count;
-        this.message_count = res.data.message_count
-      });
+      if (this.$METHOD.getStore("token")) {
+        this.$SERVER.cartCount().then(res => {
+          this.cartNum = res.data.count;
+          this.message_count = res.data.message_count;
+        });
       }
-    },
+    }
   }
 };
 </script>

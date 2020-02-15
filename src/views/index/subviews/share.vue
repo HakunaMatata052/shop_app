@@ -1,8 +1,8 @@
 <template>
   <div class="container">
-    <navBar :goback="false" title="SHARE ORDER" />
+    <navBar :goback="type=='me'?true:false" title="SHARE ORDER" />
     <div class="main">
-      <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="getList">
+      <van-list v-model="loading" :finished="finished" finished-text="No more" @load="getList">
         <div class="share-item" v-for="(item,i) in list" :key="i">
           <div class="user-info">
             <div class="avatar">
@@ -54,7 +54,8 @@ export default {
       loading: false,
       list: [],
       mediaList: [],
-      user_img: user_img
+      user_img: user_img,
+      type:null
     };
   },
   components: {
@@ -62,13 +63,16 @@ export default {
   },
   methods: {
     getList() {
+      if(this.$route.path=="/myshare"){
+          this.type = "me"
+      }
       this.$SERVER
         .dryingList({
-          page: this.page
+          page: this.page,
+          type:this.type
         })
         .then(res => {
           if (res.data.length == 0) {
-            console.log(1);
             this.finished = true;
           }
           this.loading = false;

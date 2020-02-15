@@ -38,7 +38,7 @@ export default {
     width: {
       type: String,
       default() {
-        if (window.navigator.userAgent.match(/APICloud/i)) {
+        if (window.isApp) {
           return String(api.winWidth);
         } else {
           return "100%";
@@ -49,7 +49,7 @@ export default {
     height: {
       type: String,
       default() {
-        if (window.navigator.userAgent.match(/APICloud/i)) {
+        if (window.isApp) {
           return String(api.winHeight);
         } else {
           return "100%";
@@ -93,7 +93,7 @@ export default {
     };
   },
   created() {
-    if (window.navigator.userAgent.match(/APICloud/i)) {
+    if (window.isApp) {
       if (this.$store.state.systemType == "ios") {
         this.safeArea = this.safeArea + api.safeArea.bottom;
       }
@@ -104,7 +104,7 @@ export default {
       var that = this;
       var systemType = this.$store.state.systemType;
       that.uploadShow = true;
-      if (window.navigator.userAgent.match(/APICloud/i)) {
+      if (window.isApp) {
         var FNImageClip = api.require("FNImageClip");
         api.getPicture(
           {
@@ -144,7 +144,7 @@ export default {
       }
     },
     closeUploadPopup() {
-      if (window.navigator.userAgent.match(/APICloud/i)) {
+      if (window.isApp) {
         this.uploadShow = false;
         var FNImageClip = api.require("FNImageClip");
         FNImageClip.close();
@@ -157,7 +157,7 @@ export default {
         mask: true,
         message: "加载中..."
       });
-      if (window.navigator.userAgent.match(/APICloud/i)) {
+      if (window.isApp) {
         var FNImageClip = api.require("FNImageClip");
         FNImageClip.save(
           {

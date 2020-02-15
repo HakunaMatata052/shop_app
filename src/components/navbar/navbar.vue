@@ -25,7 +25,7 @@
         <slot name="left" slot="left"></slot>
         <div class="right" slot="right">
           <slot name="right"></slot>
-          <van-icon name="service-o" size="23px" @click="$router.push('/search/2')" v-if="kefu" />
+          <van-icon name="service-o" size="23px" @click="$router.push('/chat')" v-if="kefu" />
         </div>
       </van-nav-bar>
     </div>
@@ -99,7 +99,7 @@ export default {
 .navbar {
   background: #fff;
   position: relative;
-  z-index: 9999;
+  z-index: 999;
   .title {
     span {
       font-weight: bold;

@@ -116,7 +116,7 @@ export default class Axios {
         (_option.params = params);
       // 请求成功后服务器返回二次处理
       if(!window.localStorage.getItem('token')&&config&&config.isLogin){
-        Toast.fail("请登录后再操作！");
+        Toast.fail("Login please!");
         return
       }
       axios.request(_option).then(

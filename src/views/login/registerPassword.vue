@@ -7,9 +7,9 @@
           <div class="cell-group">
             <van-icon class-prefix="icon" name="mima" class="phoneIcon" />
             <van-field
-              v-model="$store.state.register.newpassword"
+              v-model="$store.state.register.password"
               clearable
-              placeholder="请输入6-11位登录密码"
+              placeholder="Please enter 6-11 digit login password"
               class="field"
               :type="pwdShow?'text':'password'"
               :border="false"
@@ -20,9 +20,9 @@
           <div class="cell-group">
             <van-icon class-prefix="icon" name="mima" class="phoneIcon" />
             <van-field
-              v-model="newpassword"
+              v-model="password"
               clearable
-              placeholder="请输入6-11位登录密码"
+              placeholder="Please enter 6-11 digit login password"
               class="field"
               :type="pwdShow?'text':'password'"
               :border="false"
@@ -47,14 +47,14 @@
 <script>
 import navBar from "@/components/navbar/navbar.vue";
 export default {
-  name: "register",
+  name: "registerPassword",
   components: {
     navBar
   },
   data() {
     return {
       regLoading: false,
-      newpassword: "",
+      password: "",
       pwdShow: false
     };
   },
@@ -66,12 +66,12 @@ export default {
   methods: {
     regFn() {
       var that = this;
-      if (!this.$METHOD.isPassword(this.$store.state.register.newpassword)) {
-        this.$toast.fail("请输入6-11位字母数字组合密码");
+      if (!this.$METHOD.isPassword(this.$store.state.register.password)) {
+        this.$toast.fail("Please enter 6-11 alphanumeric combination password");
         return;
       }
-      if (this.$store.state.register.newpassword != this.newpassword) {
-        this.$toast.fail("两次密码不一致");
+      if (this.$store.state.register.password != this.password) {
+        this.$toast.fail("Two passwords are inconsistent");
         return;
       }
 
@@ -80,7 +80,10 @@ export default {
         .register(this.$store.state.register)
         .then(res => {
           that.regLoading = false;
-          if (window.navigator.userAgent.match(/APICloud/i)) {
+          that.$toast.success(res.msg);
+          that.$router.push("/login");
+          return;
+          if (window.isApp) {
             that.$METHOD.setStore("token", res.data.userinfo.token);
             that.$store.state.token = res.data.userinfo.token;
             that.$store.state.userInfo = res.data.userinfo_first;
@@ -150,23 +153,7 @@ export default {
       }
     }
   }
-  .field {
-  }
-  .checknumbtn {
-    background: linear-gradient(
-      90deg,
-      rgba(249, 74, 81, 1),
-      rgba(247, 109, 98, 1)
-    );
-    border: 0;
-    border-radius: 18px;
-  }
   .regbtn {
-    background: linear-gradient(
-      90deg,
-      rgba(249, 74, 81, 1),
-      rgba(247, 109, 98, 1)
-    );
     border-radius: 100px;
     margin-top: 90px;
     border: 0;
@@ -181,7 +168,7 @@ export default {
     color: #999;
     span {
       text-decoration: underline;
-      color: rgba(249, 74, 81, 1);
+      color: #1ac0a8;
     }
   }
 }

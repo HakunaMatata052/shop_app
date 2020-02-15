@@ -34,7 +34,7 @@ export default {
   data() {
     return {
       list: [],
-      delId:null
+      delId: null
     };
   },
   components: {
@@ -51,21 +51,37 @@ export default {
       });
     },
     del(id) {
-      this.$refs.passwordBox.showFn()
-      this.delId = id
+      this.$dialog
+        .confirm({
+          message: "Are you sure to delete?",
+          confirmButtonText:"confirm",
+          cancelButtonText:"cancel"
+        })
+        .then(() => {
+          this.$refs.passwordBox.showFn();
+          this.delId = id;
+        })
+        .catch(() => {
+          // on cancel
+        });
     },
-    submit(pwd){
-      
-      this.$SERVER.BankDel({
-        id:this.delId,
-        pwd:pwd
-      }).then(res => {
-        this.$refs.passwordBox.hideFn();
-        this.$toast.success(res.msg)
-        this.getList();
-      }).catch(err=>{
-        this.$refs.passwordBox.clearFn();
-      })
+    submit(pwd) {
+      this.$SERVER
+        .BankDel({
+          id: this.delId,
+          paypwd: pwd
+        })
+        .then(res => {
+          this.$refs.passwordBox.hideFn();
+          this.$toast.success(res.msg);
+          this.$refs.passwordBox.clearFn();
+          setTimeout(() => {
+            this.getList();
+          }, 1000);
+        })
+        .catch(err => {
+          this.$refs.passwordBox.clearFn();
+        });
     }
   }
 };

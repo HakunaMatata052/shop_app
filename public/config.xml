@@ -1,4 +1,4 @@
-<widget id="A6017018324640" version="0.0.1">
+<widget id="A6029441377339" version="0.0.1">
  <name>testApp</name>
 
     <description>
@@ -38,11 +38,11 @@
 
 	<preference name="autoUpdate" value="true" />
 
-	<preference name="smartUpdate" value="false" />
+	<preference name="smartUpdate" value="true" />
 
 	<preference name="debug" value="false"/>
 
-	<preference name="statusBarAppearance" value="true"/>
+	<preference name="statusBarAppearance" value="false"/>
 	
     <preference name="iOS7StatusBarAppearance" value="false"/>
 
@@ -65,12 +65,5 @@
     <meta-data name="com.baidu.lbsapi.API_KEY" value="aRP8AAYAFhVbaVCwDSDRFHOX2wIgtEGN"/>
     <feature name="bmLocation">
         <param name="ios_api_key" value="aRP8AAYAFhVbaVCwDSDRFHOX2wIgtEGN"/>
-    </feature>
-
-    <!-- 七牛 -->
-    <feature name="qiniuUpfile">
-        <param name="bucket" value="soul"/>
-        <param name="SecretKey" value="7Ju0_gQU367l4dp3gAplN7inx0ZUbMNnL382YweN"/>
-        <param name="AccessKey" value="vuI56gU3VrjxUhGEVOx9lrW3dqhR9crTt-ZQTVLJ"/>
     </feature>
 </widget>

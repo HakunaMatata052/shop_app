@@ -4,20 +4,22 @@
     <div class="register">
       <div class="main">
         <van-cell-group class="cell-group" :border="false">
-          <van-field
-            v-model="form.telephone"
-            clearable
-            placeholder="Please enter your mobile number"
-            class="field"
-            type="tel"
-            :border="false"
-            :readonly="readonly"
-          ></van-field>
-          <van-cell-group>
+          <div class="cell-group">
             <van-field
-              v-model="form.checknum"
-              center
+              v-model.number="form.phone"
               clearable
+              placeholder="Please enter your new mobile number"
+              class="field"
+              type="number"
+              :border="false"
+              pattern="[0-9]*"
+              autofocus="autofocus"
+            ></van-field>
+          </div>
+          <div class="cell-group">
+            <van-field
+              v-model="form.captcha"
+              center
               class="field"
               placeholder="Please enter SMS verification code"
             >
@@ -34,9 +36,7 @@
                 <span v-else>Send verification code</span>
               </van-button>
             </van-field>
-          </van-cell-group>
-          <van-field v-model="form.password" type="password" placeholder="Please enter a new password" class="field"></van-field>
-          <van-field v-model="form.password2" type="password" placeholder="Please enter the new password again" class="field"></van-field>
+          </div>
         </van-cell-group>
         <van-button
           type="primary"
@@ -46,11 +46,7 @@
           @click="regFn"
           class="regbtn"
           :hairline="false"
-        >Confirm revision</van-button>
-        <div class="gologin" v-if="!$METHOD.getStore('token')">
-          Already have an account?
-          <span @click="$router.push('/login')">Login immediately</span>
-        </div>
+        >submit</van-button>
       </div>
     </div>
   </div>
@@ -58,7 +54,7 @@
 <script>
 import navBar from "@/components/navbar/navbar.vue";
 export default {
-  name: "resetPassword",
+  name: "setPhone",
   components: {
     navBar
   },
@@ -66,20 +62,24 @@ export default {
     return {
       regLoading: false,
       checkNumDisabled: false,
-      readonly: false,
-      form: {
-        telephone: "",
-        password: "",
-        checknum: ""
-      },
       countDown: 60,
       checked: true,
-      timer: null
+      timer: null,
+      tipsShow: false,
+      form:{
+        phone:"",
+        captcha:""
+      }
     };
+  },
+  created() {
+    if (this.$route.params.val) {
+      this.form.spread = this.$route.params.val;
+    }
   },
   methods: {
     sendchecknum() {
-      if (this.form.telephone.length > 0) {
+      if (this.form.phone!="") {
         const timer_COUNT = 60;
         if (!this.timer) {
           this.countDown = timer_COUNT;
@@ -96,53 +96,43 @@ export default {
         }
         this.$SERVER
           .smscode({
-            phone: this.form.telephone,
-            type:"login"
+            phone: this.form.phone,
+            type: "register"
           })
           .then(res => {
             this.$toast.success("Verification code sent successfully!");
           })
           .catch(res => {
+            this.form.captcha = "";
             this.checkNumDisabled = false;
             clearInterval(this.timer);
             this.timer = null;
           });
       } else {
-        this.$toast.fail("Please enter your mobile number");
+        this.$toast.fail("Please enter the correct mobile number");
       }
     },
     regFn() {
-      if (this.form.telephone.length<=0) {
+      var that = this;
+      if (!this.$METHOD.isPhone(this.form.phone)) {
         this.$toast.fail("Please enter the correct mobile number");
         return;
       }
-      if (this.form.checknum == "") {
+      if (this.form.captcha == "") {
         this.$toast.fail("Please enter the verification code");
         return;
       }
-
-      if (!this.$METHOD.isPassword(this.form.password)) {
-        this.$toast.fail("Please enter 6-11 digit login password");
-        return;
-      }
-      if (this.form.password !== this.form.password2) {
-        this.$toast.fail("Two passwords are inconsistent");
-        return;
-      }
-      this.regLoading = true;
+      
       this.$SERVER
-        .pwdup({
-          phone: this.form.telephone,
-          captcha: this.form.checknum,
-          password: this.form.password
-        })
+        .editphone(this.form)
         .then(res => {
-          this.$toast.success(res.msg);
-          this.regLoading = false;
-          this.$router.go(-1);
+          that.regLoading = false;
+          that.$toast.success(res.msg);
+          that.$router.push("/personal");
         })
-        .catch(res => {
-          this.regLoading = false;
+        .catch(err => {
+          that.regLoading = false;
+          that.$toast.fail(err.msg);
         });
     }
   },
@@ -155,35 +145,65 @@ export default {
 #register {
   width: 100%;
   height: 100%;
-  background-color: #fff;
   .register {
     width: 100%;
     display: flex;
     justify-content: center;
     margin-top: 30px;
+    background: #fff;
+    padding: 28px 0 45px 0;
   }
   .main {
     width: 90%;
+    & > p {
+      text-align: center;
+      margin-top: 10px;
+      color: #999;
+      font-size: 14px;
+      span {
+        text-decoration: underline;
+        color: rgba(249, 74, 81, 1);
+      }
+    }
+    .cell-group {
+      .cell-group {
+        display: flex;
+        position: relative;
+        border-bottom: 1px solid #e6e6e6;
+        .phoneIcon,
+        .securityIcon {
+          position: absolute;
+          top: 10px;
+          z-index: 1;
+          font-size: 20px;
+          color: rgba(173, 173, 173, 1);
+        }
+        .recommendedPhone {
+          font-size: 15px;
+          font-family: PingFang-SC-Medium;
+          font-weight: 500;
+          color: rgba(51, 51, 51, 1);
+          width: 110px;
+          line-height: 44px;
+        }
+        .choose {
+          padding-left: 18px;
+        }
+      }
+    }
   }
   .checknumbtn {
     border: 0;
+    border-radius: 18px;
   }
   .regbtn {
     border-radius: 100px;
     margin-top: 30px;
-    font-size: 17px;
-    font-weight: bold;
-    color: #fff;
     border: 0;
-  }
-  .right-text {
-    font-size: 14px;
-    text-align: right;
-    color: #999;
-    span {
-      color: #1ac0a8;
-      margin-left: 5px;
-    }
+    font-size: 17px;
+    font-family: PingFang-SC-Bold;
+    font-weight: bold;
+    color: rgba(255, 255, 255, 1);
   }
   .gologin {
     text-align: center;
@@ -191,6 +211,7 @@ export default {
     color: #999;
     span {
       text-decoration: underline;
+      color: #1ac0a8;
     }
   }
 }

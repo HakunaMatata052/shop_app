@@ -175,8 +175,10 @@ export default {
 
       if (this.cartList.valid.length != 0) {
         this.$dialog
-          .alert({
-            message: "Are you sure you want to empty the shopping cart?"
+          .confirm({
+            message: "Are you sure you want to empty the shopping cart?",
+            confirmButtonText: "confirm",
+            cancelButtonText: "cancel"
           })
           .then(() => {
             let arr = [];

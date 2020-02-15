@@ -22,7 +22,7 @@ export default {
     openLoadPopup() {
       var that = this;
       var systemType = this.$store.state.systemType;
-      if (window.navigator.userAgent.match(/APICloud/i)) {
+      if (window.isApp) {
         var UIMediaScanner = api.require("UIMediaScanner");
         UIMediaScanner.open(
           {

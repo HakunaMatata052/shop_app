@@ -27,6 +27,7 @@ const router = new Router({
         meta: {
           keepAlive: true,
           isTransition: true,
+          slide:false,
           title: "Home",
           isMember: false,
           isLogin: false,
@@ -40,6 +41,7 @@ const router = new Router({
         meta: {
           keepAlive: false,
           isTransition: true,
+          slide:false,
           title: "Categories",
           isMember: false,
           isLogin: false,
@@ -53,6 +55,7 @@ const router = new Router({
         meta: {
           keepAlive: false,
           isTransition: true,
+          slide:false,
           title: "Share",
           isMember: false,
           isLogin: false,
@@ -66,6 +69,7 @@ const router = new Router({
         meta: {
           keepAlive: false,
           isTransition: true,
+          slide:false,
           title: "Order",
           isMember: false,
           isLogin: true,
@@ -79,6 +83,7 @@ const router = new Router({
         meta: {
           keepAlive: false,
           isTransition: true,
+          slide:false,
           title: "Personal",
           isMember: false,
           isLogin: true,
@@ -95,7 +100,7 @@ const router = new Router({
       meta: {
         keepAlive: false,
         isTransition: true,
-        title: "login",
+        title: "LOGIN",
         isMember: false,
         isLogin: false
       }
@@ -107,7 +112,19 @@ const router = new Router({
       meta: {
         keepAlive: false,
         isTransition: true,
-        title: "register",
+        title: "REGISTER",
+        isMember: false,
+        isLogin: false
+      }
+    },
+    {
+      path: "/registerPassword",
+      name: "registerPassword",
+      component: () => import("@/views/login/registerPassword.vue"),
+      meta: {
+        keepAlive: false,
+        isTransition: true,
+        title: "REGISTER",
         isMember: false,
         isLogin: false
       }
@@ -119,7 +136,7 @@ const router = new Router({
       meta: {
         keepAlive: false,
         isTransition: true,
-        title: "resetPassword",
+        title: "LOGIN PASSWORD",
         isMember: false,
         isLogin: false
       }
@@ -179,7 +196,7 @@ const router = new Router({
       meta: {
         keepAlive: false,
         isTransition: true,
-        title: "search",
+        title: "SEARCH",
         isMember: false,
         isLogin: false
       }
@@ -193,7 +210,7 @@ const router = new Router({
         isTransition: true,
         title: "MAILBOX",
         isMember: false,
-        isLogin: false
+        isLogin: true
       }
     },
     {
@@ -205,7 +222,7 @@ const router = new Router({
         isTransition: true,
         title: "MAILBOX",
         isMember: false,
-        isLogin: false
+        isLogin: true
       }
     },
     {
@@ -217,11 +234,23 @@ const router = new Router({
         isTransition: true,
         title: "BECOME VIP",
         isMember: false,
-        isLogin: false
+        isLogin: true
       }
     },
     {
-      path: "/orderDetails",
+      path: "/buyVip/:id",
+      name: "buyVip",
+      component: () => import("@/views/mine/buyVip.vue"),
+      meta: {
+        keepAlive: false,
+        isTransition: true,
+        title: "VIP",
+        isMember: false,
+        isLogin: true
+      }
+    },
+    {
+      path: "/orderDetails/:id",
       name: "orderDetails",
       component: () => import("@/views/order/orderDetails.vue"),
       meta: {
@@ -229,7 +258,7 @@ const router = new Router({
         isTransition: true,
         title: "ORDER DETAILS",
         isMember: false,
-        isLogin: false
+        isLogin: true
       }
     },
     {
@@ -241,7 +270,7 @@ const router = new Router({
         isTransition: true,
         title: "BANK CARD",
         isMember: false,
-        isLogin: false
+        isLogin: true
       }
     },
     {
@@ -253,8 +282,130 @@ const router = new Router({
         isTransition: true,
         title: "ADD BANK CARD",
         isMember: false,
-        isLogin: false
+        isLogin: true
       }
+    },
+    {
+      path: "/addressList",
+      name: "addressList",
+      component: () => import("@/views/mine/addressList.vue"),
+      meta: {
+        keepAlive: false,
+        isTransition: true,
+        title: "SHIPPING ADDRESS",
+        isMember: false,
+        isLogin: true
+      }
+    },
+    
+    {
+      path: "/addAddress/:id?",
+      name: "addAddress",
+      component: () => import("@/views/mine/addAddress.vue"),
+      meta: {
+        keepAlive: false,
+        isTransition: true,
+        title: "EDIT SHIPPING ADDRESS",
+        isMember: false,
+        isLogin: true
+      }
+    },
+    {
+      path: "/setPayPassword",
+      name: "setPayPassword",
+      component: () => import("@/views/mine/setPayPassword.vue"),
+      meta: {
+        keepAlive: false,
+        isTransition: true,
+        title: "NEW PAYMENT PASSWORD",
+        isMember: false,
+        isLogin: true
+      }
+    },
+    {
+      path: "/myshare",
+      name: "myshare",
+      component: () => import("@/views/index/subviews/share.vue"),
+      meta: {
+        keepAlive: false,
+        isTransition: true,
+        title: "MY ORDER SHARE",
+        isMember: false,
+        isLogin: true,
+      }        
+    },
+    {
+      path: "/invite",
+      name: "invite",
+      component: () => import("@/views/mine/invite.vue"),
+      meta: {
+        keepAlive: false,
+        isTransition: true,
+        title: "INVITE",
+        isMember: false,
+        isLogin: true,
+      }        
+    },
+    {
+      path: "/setPhone",
+      name: "setPhone",
+      component: () => import("@/views/mine/setPhone.vue"),
+      meta: {
+        keepAlive: false,
+        isTransition: true,
+        title: "MODIFY PHONE NUMBER",
+        isMember: false,
+        isLogin: true,
+      }        
+    },
+    {
+      path: "/bill",
+      name: "bill",
+      component: () => import("@/views/mine/bill.vue"),
+      meta: {
+        keepAlive: false,
+        isTransition: true,
+        title: "MY BILL",
+        isMember: false,
+        isLogin: true,
+      }        
+    },    
+    {
+      path: "/content/:id",
+      name: "content",
+      component: () => import("@/views/other/content.vue"),
+      meta: {
+        keepAlive: false,
+        isTransition: true,
+        title: "",
+        isMember: false,
+        isLogin: false,
+      }        
+    },
+    
+    {
+      path: "/chat",
+      name: "chat",
+      component: () => import("@/views/other/chat.vue"),
+      meta: {
+        keepAlive: false,
+        isTransition: true,
+        title: "",
+        isMember: false,
+        isLogin: false,
+      }        
+    },
+    {
+      path: "/inviteList",
+      name: "inviteList",
+      component: () => import("@/views/mine/inviteList.vue"),
+      meta: {
+        keepAlive: false,
+        isTransition: true,
+        title: "MY INVITATION",
+        isMember: false,
+        isLogin: true,
+      }        
     },
     
     

@@ -6,23 +6,22 @@
         <van-cell-group class="cell-group" :border="false">
           <div class="cell-group">
             <van-field
-              v-model.number="$store.state.register.user_account"
+              v-model.number="$store.state.register.account"
               clearable
-              placeholder="请输入手机号"
+              placeholder="Please enter your mobile number"
               class="field"
               type="number"
               :border="false"
               pattern="[0-9]*"
-               autofocus="autofocus"
+              autofocus="autofocus"
             ></van-field>
           </div>
           <div class="cell-group">
             <van-field
               v-model="$store.state.register.captcha"
               center
-              clearable
               class="field"
-              placeholder="请输入短信验证码"
+              placeholder="Please enter SMS verification code"
             >
               <van-button
                 slot="button"
@@ -33,16 +32,16 @@
                 :disabled="checkNumDisabled"
                 :hairline="false"
               >
-                <span v-if="checkNumDisabled">{{countDown}}秒后重试</span>
-                <span v-else>发送验证码</span>
+                <span v-if="checkNumDisabled">Try again in {{countDown}} seconds</span>
+                <span v-else>Send verification code</span>
               </van-button>
             </van-field>
           </div>
           <div class="cell-group">
-            <p class="recommendedPhone">邀请码</p>
+            <p class="recommendedPhone">code</p>
             <van-field
-              v-model="$store.state.register.retail_code"
-              placeholder="请输入邀请码"
+              v-model="$store.state.register.spread"
+              placeholder="Please enter the invitation code"
               class="field choose"
               readonly
               :border="false"
@@ -57,10 +56,10 @@
           @click="regFn"
           class="regbtn"
           :hairline="false"
-        >下一步</van-button>
+        >Next</van-button>
         <div class="gologin">
-          已有账号，
-          <span @click="$router.push('/login')">立即登录</span>
+          Existing account number,
+          <span @click="$router.push('/login')">Login immediately</span>
         </div>
       </div>
     </div>
@@ -80,17 +79,17 @@ export default {
       countDown: 60,
       checked: true,
       timer: null,
-      tipsShow:false
+      tipsShow: false
     };
   },
   created() {
     if (this.$route.params.val) {
-      this.$store.state.register.retail_code = this.$route.params.val;
+      this.$store.state.register.spread = this.$route.params.val;
     }
   },
   methods: {
     sendchecknum() {
-      if (this.$METHOD.isPhone(this.$store.state.register.user_account)) {
+      if (this.$store.state.register.account.length<=0) {
         const timer_COUNT = 60;
         if (!this.timer) {
           this.countDown = timer_COUNT;
@@ -107,10 +106,11 @@ export default {
         }
         this.$SERVER
           .smscode({
-            mobile: this.$store.state.register.user_account
+            phone: this.$store.state.register.account,
+            type: "register"
           })
           .then(res => {
-            this.$toast.success("验证码发送成功！");
+            this.$toast.success("Verification code sent successfully!");
           })
           .catch(res => {
             this.$store.state.register.captcha = "";
@@ -119,21 +119,21 @@ export default {
             this.timer = null;
           });
       } else {
-        this.$toast.fail("请输入正确的手机号码");
+        this.$toast.fail("Please enter the correct mobile number");
       }
     },
     regFn() {
       var that = this;
-      if (!this.$METHOD.isPhone(this.$store.state.register.user_account)) {
-        this.$toast.fail("请输入正确的手机号码");
+      if (!this.$METHOD.isPhone(this.$store.state.register.account)) {
+        this.$toast.fail("Please enter the correct mobile number");
         return;
       }
       if (this.$store.state.register.captcha == "") {
-        this.$toast.fail("请输入验证码");
+        this.$toast.fail("Please enter the verification code");
         return;
       }
-      if (this.$store.state.register.retail_code == "") {
-        this.$toast.fail("请输入邀请码");
+      if (this.$store.state.register.spread == "") {
+        this.$toast.fail("Please enter the verification code");
         return;
       }
       that.$router.push("/registerPassword");
@@ -165,7 +165,7 @@ export default {
       font-size: 14px;
       span {
         text-decoration: underline;
-        color: rgba(249,74,81,1);
+        color: rgba(249, 74, 81, 1);
       }
     }
     .cell-group {
@@ -196,12 +196,10 @@ export default {
     }
   }
   .checknumbtn {
-    background: linear-gradient(90deg,rgba(249,74,81,1),rgba(247,109,98,1));
     border: 0;
     border-radius: 18px;
   }
   .regbtn {
-    background: linear-gradient(90deg,rgba(249,74,81,1),rgba(247,109,98,1));
     border-radius: 100px;
     margin-top: 30px;
     border: 0;
@@ -216,7 +214,7 @@ export default {
     color: #999;
     span {
       text-decoration: underline;
-      color: rgba(249,74,81,1);
+      color: #1ac0a8;
     }
   }
 }

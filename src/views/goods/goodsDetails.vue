@@ -1,13 +1,15 @@
 <template>
   <div class="container">
-    <navBar :search="true">
-      <van-icon
-        name="shopping-cart-o"
-        :size="cartNum==0?23:22"
-        slot="right"
-        :info="cartNum==0?'':cartNum"
-        @click="$router.push('/cart')"
-      />
+    <navBar :search="true" :kefu="false">
+      <template slot="right">
+        <van-icon
+          name="shopping-cart-o"
+          :size="cartNum==0?23:22"
+          :info="cartNum==0?'':cartNum"
+          @click="$router.push('/cart')"
+        />
+        <van-icon name="share" size="23px" @click="$refs.share.show()" />
+      </template>
     </navBar>
     <div class="main" ref="main">
       <van-swipe :autoplay="3000" indicator-color="white" class="banner">
@@ -28,16 +30,17 @@
         <h3>Exclusive Member Discounts</h3>
         <div class="con">
           <div class="dropdown-menu" @click="show=true">
-            <van-icon name="arrow-down" color="#999" class="ico" />Pre-sale 60-day delivery
+            <van-icon name="arrow-down" color="#999" class="ico" />
+            {{vip_detail.name}}
           </div>
-          <div class="price">{{$store.state.currency}}{{storeInfo.price}}</div>
+          <div class="price">{{$store.state.currency}}{{vip_detail.price}}</div>
         </div>
       </div>
-      <div class="price-info">
-        <h3>Special agent exclusive price</h3>
-        <h4>{{$store.state.currency}}1,154.00</h4>
-        <h5>Enjoy a higher discount forever</h5>
-        <p>Become a special agent</p>
+      <div class="price-info" v-if="$store.state.userInfo.vip!=4">
+            <h3>Special agent exclusive price</h3>
+            <h4>{{$store.state.currency}}{{level.discount/100 * vip_detail.price | format45(100) }}</h4>
+            <h5>Enjoy a higher discount forever</h5>
+            <p @click="$router.push('/vip')">Become a special agent</p>
       </div>
       <div class="product-details" v-if="storeInfo.index_attr">
         <h3>- product details -</h3>
@@ -48,7 +51,7 @@
           </span>
         </p>
       </div>
-      <div class="share-btn" @click="$router.push('/shareOrder/1')">
+      <div class="share-btn" @click="$router.push('/shareOrder/'+storeInfo.id)">
         <van-icon class-prefix="icon" name="camera" color="#fff" class="ico" />
         <span>SHARE THE SAME ITEM</span>
       </div>
@@ -76,16 +79,17 @@
         :show-add-cart-btn="false"
         button-type="warning"
         buy-text="confirm"
+        :close-on-click-overlay="true"
       >
         <!-- 自定义 sku-header-price -->
         <template slot="sku-header-price" slot-scope="props">
           <div class="sku-right">
             <div class="goods-name">iPhone 11 Pro</div>
             <div class="goods-short-name">Midnight Green 4G+128G</div>
-            <p>Pre-sale 60-day delivery</p>
+            <p>{{vip_detail.name}}</p>
             <div class="sku-info">
               <div class="price">
-                <h3>{{ props.price }}</h3>
+                <h3>{{$store.state.currency}}{{props.price * (vip_detail.discount/100) | format45(100)}}</h3>
                 <s>{{$store.state.currency}}{{storeInfo.ot_price}}</s>
               </div>
             </div>
@@ -93,23 +97,26 @@
         </template>
 
         <template slot="sku-body-top" slot-scope="props">
-          <div class="option">
+          <!-- <div class="option">
             <h3>Exclusive Member Discounts</h3>
             <div class="con">
-              Pre-sale 60-day delivery
-              <div class="price">{{$store.state.currency}}{{storeInfo.price}}</div>
+              {{vip_detail.name}}
+              <div
+                class="price"
+              >{{$store.state.currency}}{{props.price * (vip_detail.discount/100) | format45(100)}}</div>
             </div>
-          </div>
-          <div class="price-info">
+          </div>-->
+          <div class="price-info" v-if="$store.state.userInfo.vip!=4">
             <h3>Special agent exclusive price</h3>
-            <h4>$1,154.00</h4>
+            <h4>{{$store.state.currency}}{{level.discount/100 * vip_detail.price | format45(100) }}</h4>
             <h5>Enjoy a higher discount forever</h5>
-            <p>Become a special agent</p>
+            <p @click="$router.push('/vip')">Become a special agent</p>
           </div>
         </template>
       </van-sku>
+      <share ref="share" content="" />
     </div>
-    <van-goods-action class="goods-action" safe-area-inset-bottom v-if="!skuShow">
+    <van-goods-action class="goods-action" safe-area-inset-bottom>
       <van-goods-action-icon icon="audio" />
       <van-goods-action-icon icon="cart-o" :info="cartNum ==0?'':cartNum" to="/cart" />
       <van-goods-action-button
@@ -126,23 +133,23 @@
 <script>
 import navBar from "@/components/navbar/navbar.vue";
 import goodsItem from "@/components/goods/goodsItem.vue";
+import share from "@/components/operation/share.vue";
 export default {
   name: "goodsDetails",
   components: {
     navBar,
-    goodsItem
+    goodsItem,
+    share
   },
   data() {
     return {
+      level:{},
       isAddCart: 0,
       cartNum: 0,
       show: false,
       skuShow: false,
-      actions: [
-        { name: "选项" },
-        { name: "选项" },
-        { name: "选项", subname: "描述信息" }
-      ],
+      vip_detail: {},
+      actions: [],
       balance: null,
       storeInfo: {
         index_attr: ""
@@ -197,11 +204,41 @@ export default {
     getDetails() {
       this.$refs.main.scrollTop = 0;
       this.$SERVER.productDetail(this.$route.params.id).then(res => {
+        this.level = res.data.level
         this.balance = res.data.now_money;
         this.storeInfo = res.data.storeInfo;
         this.sku.price = res.data.storeInfo.price;
         this.likeInfo = res.data.likeInfo;
         this.sku.stock_num = res.data.storeInfo.stock;
+        let json = {
+          name: "Immediate delivery",
+          subname:
+            this.$store.state.currency + Number(res.data.storeInfo.price),
+          id: 0,
+          discount: "100",
+          price: Number(res.data.storeInfo.price)
+        };
+        if (res.data.storeInfo.vip_detail.length != 0) {
+          res.data.storeInfo.vip_detail.forEach((e, i) => {
+            if (i == res.data.storeInfo.vip_detail.length - 1) {
+              this.vip_detail = {
+                ...{ name: e.delivery_time },
+                ...e
+              };
+            }
+            this.actions.push({
+              ...{
+                name: e.delivery_time,
+                subname: this.$store.state.currency + e.price
+              },
+              ...e
+            });
+          });
+        } else {
+          this.vip_detail = json;
+        }
+        this.actions.push(json);
+
         if (res.data.productAttr.length == 0) {
           this.sku.tree = [];
           return;
@@ -224,8 +261,9 @@ export default {
         // this.sku.tree[0] = res.data.productValue
       });
     },
-    onSelect() {
+    onSelect(item) {
       this.show = false;
+      this.vip_detail = item;
     },
     onBuyClicked(type) {
       this.isAddCart = type;
@@ -236,6 +274,7 @@ export default {
       var path;
       json.cartNum = sku.selectedNum;
       json.productId = sku.goodsId;
+      json.vip_detail = this.vip_detail.id;
       if (sku.selectedSkuComb) {
         json.uniqueId = sku.selectedSkuComb.s1;
       } else {
@@ -253,6 +292,11 @@ export default {
         this.$SERVER.addCart(json).then(res => {
           this.$router.push("/confirmationOrder/" + res.data.cartId);
         });
+      }
+    },
+    forward(type){
+      if(type=="weixin"){
+        
       }
     }
   }
@@ -418,7 +462,6 @@ export default {
   }
 }
 .hot-recommend {
-  padding-bottom: 65px;
   .title {
     display: flex;
     align-items: center;
@@ -481,5 +524,9 @@ export default {
 }
 .goods-action {
   box-shadow: 0px 0px 7px 0px rgba(0, 0, 0, 0.12);
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
 }
+
 </style>

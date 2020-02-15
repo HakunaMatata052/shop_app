@@ -15,22 +15,22 @@
           <div class="user-info">
             <h4>{{$store.state.userInfo.vip_name}}</h4>
             <h3>{{$store.state.userInfo.nickname}}</h3>
-            <p>My invitation code: {{$store.state.userInfo.code}}</p>
+            <p>My invitation code: {{$store.state.userInfo.spread}}</p>
           </div>
           <div class="logout" @click="logout">sign out</div>
         </div>
         <div class="order-info">
-          <dl>
+          <dl @click="$router.push('/InviteList')">
             <dt>{{$store.state.userInfo.spread_count}}</dt>
-            <dd>spread_count</dd>
+            <dd>Invited</dd>
+          </dl>
+          <dl @click="$router.push('/cart')">
+            <dt>{{cartNum}}</dt>
+            <dd>Shopping cart</dd>
           </dl>
           <dl>
-            <dt>286</dt>
-            <dd>shopping cart</dd>
-          </dl>
-          <dl>
-            <dt>286</dt>
-            <dd>bought</dd>
+            <dt>{{$store.state.userInfo.order_count}}</dt>
+            <dd>Bought</dd>
           </dl>
         </div>
       </div>
@@ -79,24 +79,30 @@ export default {
   data() {
     return {
       menu: [
-        { name: "Bill", path: "/", icon: "order" },
+        { name: "Bill", path: "/bill", icon: "order" },
         { name: "Bank Cards", path: "/bankCardList", icon: "creditcard" },
-        { name: "My Address", path: "/", icon: "map" },
-        { name: "Invite", path: "/", icon: "favorites" },
-        { name: "VIP Privilege", path: "/", icon: "bussiness-man" },
-        { name: "Payment Password", path: "/", icon: "password" },
-        { name: "Login Password", path: "/", icon: "password" },
-        { name: "Replace Bound Phone", path: "/", icon: "ipad" },
-        { name: "My Share Order", path: "/", icon: "cameraswitching" },
-        { name: "About Us", path: "/", icon: "Customermanagement" }
+        { name: "My Address", path: "/addressList", icon: "map" },
+        { name: "Invite", path: "/invite", icon: "favorites" },
+        { name: "VIP Privilege", path: "/vip", icon: "bussiness-man" },
+        { name: "Payment Password", path: "/setPayPassword", icon: "password" },
+        { name: "Login Password", path: "/resetPassword", icon: "password" },
+        { name: "Replace Bound Phone", path: "/setPhone", icon: "ipad" },
+        { name: "My Share Order", path: "/myshare", icon: "cameraswitching" },
+        { name: "About Us", path: "/content/1", icon: "Customermanagement" }
       ],
-      user_img: user_img
+      user_img: user_img,
+      cartNum:0
     };
   },
   components: {
     navBar
   },
   computed: {},
+  created(){
+            this.$SERVER.cartCount().then(res => {
+          this.cartNum = res.data.count;
+        });
+  },
   methods: {
     uploadAvatar(file) {
       let formData = new FormData();
@@ -123,7 +129,7 @@ export default {
         });
     },
     logout() {
-      if (window.navigator.userAgent.match(/APICloud/i)) {
+      if (window.isApp) {
         var push = api.require("push");
         push.unbind(
           {

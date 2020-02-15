@@ -41,22 +41,17 @@ export default {
         this.transitionName = "";
       }
     });
-    if (window.navigator.userAgent.match(/APICloud/i)) {
+    if (window.isApp) {
       api.setStatusBarStyle({
-        style: "dark",
-        color: "rgba(255,255,255,0)"
+        style: "light",
+        color: "rgba(0,0,0,1)"
       });
       api.addEventListener(
         {
           name: "swiperight"
         },
         function(ret, err) {
-          if (
-            that.$route.name == "home" ||
-            that.$route.name == "video" ||
-            that.$route.name == "game" ||
-            that.$route.name == "mine"
-          ) {
+          if (!that.$route.meta.slide) {
           } else {
             that.$router.go(-1);
           }
@@ -87,7 +82,7 @@ export default {
         this.$store.state.token = this.$METHOD.getStore("token");
         this.$SERVER.getUserInfo().then(res => {
           this.$store.state.userInfo = res.data;
-          if (window.navigator.userAgent.match(/APICloud/i)) {
+          if (window.isApp) {
             this.push.joinGroup(
               {
                 groupName: "department"
@@ -177,8 +172,10 @@ export default {
         function(ret, err) {
           that.$dialog
             .confirm({
-              title: "更新",
-              message: "APP更新完成，是否现在重启？"
+              title: "update",
+              message: "App update completed, restart now?",
+              confirmButtonText: "confirm",
+              cancelButtonText: "cancel"
             })
             .then(() => {
               api.rebootApp();

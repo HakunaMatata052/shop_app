@@ -14,7 +14,7 @@ module.exports.theme = {
 "@gray-dark": "#969799",
 // Component Colors
 "@text-color": "#323233",
-"@border-color": "#ebedf0",
+"@border-color": "#e0e0e0",//"#ebedf0",
 "@active-color": "#f2f3f5",
 "@background-color": "#f8f8f8",
 "@background-color-light": "#fafafa",

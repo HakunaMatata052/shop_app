@@ -1,7 +1,13 @@
 <template>
   <div class="container">
     <navBar :goback="false" :search="true">
-      <van-icon name="envelop-o" :dot="message_count>0" size="23px" slot="left" @click="$router.push('/messageList')" />
+      <van-icon
+        name="envelop-o"
+        :dot="message_count>0"
+        size="23px"
+        slot="left"
+        @click="$router.push('/messageList')"
+      />
       <van-icon
         name="shopping-cart-o"
         :size="cartNum==0?23:22"
@@ -19,7 +25,7 @@
         :line-width="0"
         title-active-color="#1ac0a8"
         :border="false"
-        @change="selectTabs"
+        @click="selectTabs"
         :swipe-threshold="5"
         :ellipsis="false"
       >
@@ -56,8 +62,8 @@
             finished-text="no more"
             @load="selectSCat(activeSCat)"
             immediate-check
-          > -->
-            <goods-item :data="item" v-for="(item,i) in goodsList" :key="i" left-width="85px" />
+          >-->
+          <goods-item :data="item" v-for="(item,i) in goodsList" :key="i" left-width="85px" />
           <!-- </van-list> -->
         </div>
       </div>
@@ -72,13 +78,13 @@ export default {
   data() {
     return {
       cartNum: 0,
-      message_count:0,
+      message_count: 0,
       categoryList: [],
       goodsList: [],
       active: -1,
       activeCat: [],
       activeSCat: 0,
-      limit:99999
+      limit: 99999
     };
   },
   components: {
@@ -95,23 +101,27 @@ export default {
       if (this.$METHOD.getStore("token")) {
         this.$SERVER.cartCount().then(res => {
           this.cartNum = res.data.count;
-          this.message_count = res.data.message_count
+          this.message_count = res.data.message_count;
         });
       }
     },
     getCategory() {
       this.$SERVER.category().then(res => {
         this.categoryList = res.data;
-        this.selectTabs(this.active);
+        if (this.$route.params.id != undefined) {
+          this.selectTabs(this.$route.params.id);
+        } else {
+          this.selectTabs(this.active);
+        }
       });
     },
-    selectTabs() {
-      if (this.active == -1) {
+    selectTabs(id) {
+      if (id == -1) {
         this.activeCat = this.categoryList[0].children;
-        this.selectSCat(0)
+        this.selectSCat(0);
       } else {
-        this.activeCat = this.categoryList[this.active].children;
-        this.selectSCat( this.categoryList[this.active].children[0].id)
+        this.activeCat = this.categoryList[id].children;
+        this.selectSCat(this.categoryList[id].children[0].id);
       }
     },
     selectSCat(id) {
@@ -123,6 +133,11 @@ export default {
         })
         .then(res => {
           this.goodsList = res.data;
+          if (this.$route.params.id == undefined) {
+            this.active = -1;
+          } else {
+            this.active = this.$route.params.id;
+          }
         });
     }
   }

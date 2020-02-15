@@ -1,42 +1,44 @@
 <template>
-  <div id="login">
+  <div class="container">
     <div class="main">
-      <div class="close">
-        <van-icon name="cross" color="rgba(204,204,204,1)" @click="$router.go(-1)" />
+      <div class="login">
+        <div class="close">
+          <van-icon name="cross" color="rgba(204,204,204,1)" @click="$router.go(-1)" />
+        </div>
+        <h1>
+          Log in
+          <small @click="$router.push('/register')">Register</small>
+        </h1>
+        <van-cell-group class="cell-group" :border="false">
+          <van-field
+            v-model="form.user_account"
+            clearable
+            placeholder="phone number"
+            class="field"
+            type="number"
+            pattern="[0-9]*"
+            :border="false"
+            autofocus="autofocus"
+          ></van-field>
+          <van-field
+            v-model="form.user_pwd"
+            type="password"
+            placeholder="password"
+            class="field"
+            :border="false"
+          ></van-field>
+        </van-cell-group>
+        <span class="forget" @click="$router.push('/resetPassword')">Forgot password?</span>
+        <van-button
+          type="primary"
+          size="large"
+          :loading="loginLoading"
+          loading-type="spinner"
+          @click="loginFn"
+          class="loginbtn"
+          :hairline="false"
+        >Log in</van-button>
       </div>
-      <h1>
-        Log in
-        <small @click="$router.push('/register')">Register</small>
-      </h1>
-      <van-cell-group class="cell-group" :border="false">
-        <van-field
-          v-model="form.user_account"
-          clearable
-          placeholder="phone number"
-          class="field"
-          type="number"
-          pattern="[0-9]*"
-          :border="false"
-          autofocus="autofocus"
-        ></van-field>
-        <van-field
-          v-model="form.user_pwd"
-          type="password"
-          placeholder="password"
-          class="field"
-          :border="false"
-        ></van-field>
-      </van-cell-group>
-      <span class="forget" @click="$router.push('/resetPassword')">Forgot password?</span>
-      <van-button
-        type="primary"
-        size="large"
-        :loading="loginLoading"
-        loading-type="spinner"
-        @click="loginFn"
-        class="loginbtn"
-        :hairline="false"
-      >Log in</van-button>
     </div>
   </div>
 </template>
@@ -60,11 +62,11 @@ export default {
     loginFn() {
       var that = this;
       if (!this.$METHOD.isPhone(that.form.user_account)) {
-        this.$toast.fail("请输入正确的手机号码");
+        this.$toast.fail("Please enter the correct mobile number");
         return;
       }
       if (that.form.user_pwd.length == 0) {
-        this.$toast.fail("请填写密码");
+        this.$toast.fail("Please fill in the password");
         return;
       }
       that.loginLoading = true;
@@ -79,7 +81,7 @@ export default {
           that.loginLoading = false;
           this.$SERVER.getUserInfo().then(res => {
             this.$store.state.userInfo = res.data;
-            if (window.navigator.userAgent.match(/APICloud/i)) {
+            if (window.isApp) {
               this.push.joinGroup(
                 {
                   groupName: "department"
@@ -96,7 +98,7 @@ export default {
             }
           });
           that.$router.go(-1);
-          that.$toast.success("登录成功");
+          that.$toast.success("Login successfully");
         })
         .catch(res => {
           that.loginLoading = false;
@@ -106,15 +108,12 @@ export default {
 };
 </script>
 <style lang="less" scoped>
-#login .van-field__control {
-  color: rgba(153, 153, 153, 1);
-}
-.top {
-  background: rgba(255, 255, 255, 0);
-}
-#login {
-  width: 100%;
-  height: 100%;
+.login {
+    background: #fff;
+    border-radius: 20px;
+    padding: 45px 20px 0 20px;
+    margin: 30px auto;
+    width: 73%;
   .close {
     margin-bottom: 75px;
     margin-left: -30px;
@@ -124,21 +123,6 @@ export default {
     height: 85px;
     border-radius: 50%;
     margin-top: 65px;
-  }
-  .login {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-  }
-  .main {
-    background: #fff;
-    border-radius: 20px;
-    margin: 45px 20px 0 20px;
-    width: 73%;
-    padding: 0 32px;
   }
   h1 {
     font-size: 31px;

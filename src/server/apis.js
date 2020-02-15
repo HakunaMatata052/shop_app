@@ -29,7 +29,7 @@ class Api extends Axios {
     return await this.axios("GET", "product/detail/"+params,{},{LOADING:true});
   }
   async addCart(params = {}) {
-    return await this.axios("POST", "cart/add", params);
+    return await this.axios("POST", "cart/add", params,{isLogin:true});
   }
   async addressList(params = {}) {
     return await this.axios("GET", "address/list", params);
@@ -53,7 +53,7 @@ class Api extends Axios {
     return await this.axios("POST", "cart/del", params);
   }
   async orderList(params = {}) {
-    return await this.axios("POST", "order/list", params);
+    return await this.axios("GET", "order/list", params);
   }
   async productHot(params = {}) {
     return await this.axios("GET", "product/hot", params);
@@ -77,7 +77,74 @@ class Api extends Axios {
     return await this.axios("GET", "user/userbank", params,{LOADING:true});
   }  
   async BankDel(params = {}) {
-    return await this.axios("POST", "user/userbank", params,{LOADING:true});
+    return await this.axios("POST", "user/bank_del", params,{LOADING:true});
+  }
+  async bankList(params = {}) {
+    return await this.axios("GET", "user/banklist", params);
+  }
+  async bankEdit(params = {}) {
+    return await this.axios("POST", "user/bank_edit", params);
+  }
+  async addressDefaultSet(params = {}) {
+    return await this.axios("POST", "address/default/set", params);
+  }
+  async addressDetail(params = {}) {
+    return await this.axios("GET", "address/detail/"+params,{},{LOADING:true});
+  }
+  async addressEdit(params = {}) {
+    return await this.axios("POST", "address/edit" ,params);
+  }
+  async addressDel(params = {}) {
+    return await this.axios("POST", "address/del" ,params);
+  }
+  async tradepwdup(params = {}) {
+    return await this.axios("POST", "user/tradepwdup" ,params,{LOADING:true});
+  }
+  async levelGrade(params = {}) {
+    return await this.axios("GET", "user/level/grade" ,params,{LOADING:true});
+  }
+  async vip_first(params = {}) {
+    return await this.axios("POST", "user/level/vip_first" ,params,{LOADING:true});
+  }
+  async vip_buy(params = {}) {
+    return await this.axios("POST", "user/level/vip_buy" ,params,{LOADING:true});
+  }
+  async smscode(params = {}) {
+    return await this.axios("POST", "register/verify" ,params,{LOADING:true});
+  }
+  async register(params = {}) {
+    return await this.axios("POST", "register" ,params,{LOADING:true});
+  }
+  async orderCreate(params = {}) {
+    return await this.axios("POST", "order/create/"+params.orderid ,params,{LOADING:true});
+  }
+  async orderDetail(params = {}) {
+    return await this.axios("GET", "order/detail/"+params ,{},{LOADING:true});
+  }
+  async pwdup(params = {}) {
+    return await this.axios("POST", "register/reset",params,{LOADING:true});
+  }
+ 
+  async editphone(params = {}) {
+    return await this.axios("POST", "editphone",params,{LOADING:true});
+  }
+  async bill(params = {}) {
+    return await this.axios("GET", "spread/commission/"+params.type,params,{LOADING:true});
+  }  
+  async about(params = {}) {
+    return await this.axios("GET", "about",params,{LOADING:true});
+  }
+  async invite(params = {}) {
+    return await this.axios("GET", "invite",params,{LOADING:true});
+  }
+  async spreadPeople(params = {}) {
+    return await this.axios("POST", "spread/people",params,{LOADING:true});
+  }
+  async orderchase(params = {}) {
+    return await this.axios("POST", "orderchase", params);
+  }
+  async orderPay(params = {}) {
+    return await this.axios("POST", "order/pay", params);
   }
   
 }

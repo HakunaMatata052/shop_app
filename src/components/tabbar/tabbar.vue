@@ -40,7 +40,7 @@ export default {
         item => item.path === this.$route.path
       );
     });
-    if (window.navigator.userAgent.match(/APICloud/i)) {
+    if (window.isApp) {
       this.bottom = api.safeArea.bottom;
     }
   },
@@ -64,7 +64,7 @@ export default {
 .footer {
   background-color: #ffffff;
   position: relative;
-  z-index: 9999;
+  z-index: 999;
 }
 .tabbar-list {
   display: flex;

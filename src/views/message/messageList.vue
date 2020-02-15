@@ -2,7 +2,7 @@
   <div class="container">
     <navBar />
     <div class="main">
-      <van-list v-model="loading" :finished="finished" finished-text="没有更多了" @load="getList">
+      <van-list v-model="loading" :finished="finished" finished-text="No more" @load="getList">
         <div class="message-list">
           <div class="item" :class="item.state?'':'unread'" v-for="(item,i) in list" :key="i">
             <div class="avatar" @click="$router.push('/messageDetails/'+item.id)">

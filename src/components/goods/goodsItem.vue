@@ -76,7 +76,7 @@ export default {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-top: 10px;
+      margin-top: 5px;
       .price {
         s {
           font-size: 12px;
